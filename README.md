@@ -99,12 +99,13 @@ Below we describe the steps of using LECIF to learn the human-mouse LECIF score.
 
 	For each species, we store the annotation files in four separate directories to group files that need the same preprocessing steps:
 	
-	Directory for human | Directory for mouse | Directory contains 
------------- | ------------- | -------------
-hg19_DNaseChIPseq | mm10_DNaseqChIPseq | Bed files containing peak calls from DNase-seq and ChIP-seq experiments
-hg19_ChromHMM | mm10_ChromHMM | Bed files containing segmentation from ChromHMM chromatin state annotation
-hg19_CAGE | mm10_CAGE | a file containing a matrix of peak calls from CAGE experiments, with each row corresponding to a genomic location and each column corresponding to one CAGE experiment
-hg19_RNAseq | mm10_RNAseq | BigWig files containing signals from RNA-seq experiments
+	
+	| Directory for human | Directory for mouse | Directory contains |
+	| ------------------- | ------------------- | ------------------ |
+	| hg19_DNaseChIPseq | mm10_DNaseqChIPseq | Bed files containing peak calls from DNase-seq and ChIP-seq experiments |
+	| hg19_ChromHMM | mm10_ChromHMM | Bed files containing segmentation from ChromHMM chromatin state annotation |
+	| hg19_CAGE | mm10_CAGE | a file containing a matrix of peak calls from CAGE experiments, with each row corresponding to a genomic location and each column corresponding to one CAGE experiment |
+	| hg19_RNAseq | mm10_RNAseq | BigWig files containing signals from RNA-seq experiments |
 
 2. For each of the eight directories, preprocess all the downloaded files in the directory.
 
@@ -461,7 +462,7 @@ As specified in the data split, to make predictions for pairs of human and mouse
 								-s 1 -t -k \
 								> NN/output/train.py.output_odd_1.txt
 		
-	`-k` specifies that the hyper-parameters should be chosen randomly. [This table]() lists all the hyper-parameters and their candidate values. Both positive training data size (specified by `-tr`) and total positive training data size (specified by `-tra`) is set to 1 million since we want all 100 neural networks to be trained on the first 1 million positive samples and the first 1 million negative samples in the provided training data file. It is assumed that the number of negative samples is the same as the number of positive samples.
+	`-k` specifies that the hyper-parameters should be chosen randomly. [This table](table/SupplementaryTable3.xlsx) lists all the hyper-parameters and their candidate values. Both positive training data size (specified by `-tr`) and total positive training data size (specified by `-tra`) is set to 1 million since we want all 100 neural networks to be trained on the first 1 million positive samples and the first 1 million negative samples in the provided training data file. It is assumed that the number of negative samples is the same as the number of positive samples.
 	
 	The script prints out useful information for each epoch as the training progresses. In the example above, the last line `> NN/output/train.py.output_odd_1.txt` saves this to a file. Each line is formatted as follows: 
 	- Columns 1-6: seed, negative to positive sample weight ratio, number of positive training samples, number of negative training samples, number of positive validation samples, number of negative validation samples
