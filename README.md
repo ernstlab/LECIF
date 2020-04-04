@@ -23,8 +23,8 @@ Below we describe the steps of using LECIF to learn the human-mouse LECIF score.
 2. For each human chromosome (except for Y and mitochondrial chromosomes), find all mouse bases that align to that human chromosome.
 
 		usage: python source/findAligningBases.py [-h] -a AXTNET_FILENAME -m
-                                          MOUSE_CHROM_SIZE_FILENAME -o
-                                          OUTPUT_FILENAME
+							  MOUSE_CHROM_SIZE_FILENAME -o
+							  OUTPUT_FILENAME
 
 		For a given human chromosome, find all mouse bases that align to that human
 		chromosome
@@ -59,7 +59,7 @@ Below we describe the steps of using LECIF to learn the human-mouse LECIF score.
 4. Sample the first base of every non-overlapping genomic window of length 50 bp (at most) defined across consecutive bases in each human chromosome that align to mouse.
 
 		usage: python source/samplePairs.py [-h] -i INPUT_FILENAME [-b BIN_SIZE] -o
-                                    		OUTPUT_PREFIX
+						    OUTPUT_PREFIX
 
 		Sample the first base of every non-overlapping genomic window defined across
 		consecutive human genomic bases that align to mouse
@@ -327,29 +327,29 @@ As specified in the data split, to make predictions for pairs of human and mouse
 	Train 100 neural networks, each with randomly determined combinations of hyper-parameters and trained on the same set of 1 million positive and 1 million negative training examples. 
 
 		usage: python source/train.py [-h] [-o OUTPUT_FILENAME_PREFIX] [-k] [-v] [-t]
-				                              [-r NEG_DATA_RATIO] [-s SEED] [-e NUM_EPOCH] -A
-				                              HUMAN_TRAINING_DATA_FILENAME -B
-				                              MOUSE_TRAINING_DATA_FILENAME -C
-				                              SHUFFLED_MOUSE_TRAINING_DATA_FILENAME -D
-				                              HUMAN_VALIDATION_DATA_FILENAME -E
-				                              MOUSE_VALIDATION_DATA_FILENAME -F
-				                              SHUFFLED_MOUSE_VALIDATION_DATA_FILENAME
-				                              [-tr POSITIVE_TRAINING_DATA_SIZE]
-				                              [-tra TOTAL_POSITIVE_TRAINING_DATA_SIZE]
-				                              [-va POSITIVE_VALIDATION_DATA_SIZE]
-				                              [-hf NUM_HUMAN_FEATURES]
-				                              [-mf NUM_MOUSE_FEATURES]
-				                              [-hrmin HUMAN_RNASEQ_MIN]
-				                              [-hrmax HUMAN_RNASEQ_MAX]
-				                              [-mrmin MOUSE_RNASEQ_MIN]
-				                              [-mrmax MOUSE_RNASEQ_MAX] [-b BATCH_SIZE]
-				                              [-l LEARNING_RATE] [-d DROPOUT_RATE]
-				                              [-nl1 NUM_LAYERS_1] [-nl2 NUM_LAYERS_2]
-				                              [-nnh1 NUM_NEURON_HUMAN_1]
-				                              [-nnh2 NUM_NEURON_HUMAN_2]
-				                              [-nnm1 NUM_NEURON_MOUSE_1]
-				                              [-nnm2 NUM_NEURON_MOUSE_2] [-nn1 NUM_NEURON_1]
-				                              [-nn2 NUM_NEURON_2]
+					      [-r NEG_DATA_RATIO] [-s SEED] [-e NUM_EPOCH] -A
+					      HUMAN_TRAINING_DATA_FILENAME -B
+					      MOUSE_TRAINING_DATA_FILENAME -C
+					      SHUFFLED_MOUSE_TRAINING_DATA_FILENAME -D
+					      HUMAN_VALIDATION_DATA_FILENAME -E
+					      MOUSE_VALIDATION_DATA_FILENAME -F
+					      SHUFFLED_MOUSE_VALIDATION_DATA_FILENAME
+					      [-tr POSITIVE_TRAINING_DATA_SIZE]
+					      [-tra TOTAL_POSITIVE_TRAINING_DATA_SIZE]
+					      [-va POSITIVE_VALIDATION_DATA_SIZE]
+					      [-hf NUM_HUMAN_FEATURES]
+					      [-mf NUM_MOUSE_FEATURES]
+					      [-hrmin HUMAN_RNASEQ_MIN]
+					      [-hrmax HUMAN_RNASEQ_MAX]
+					      [-mrmin MOUSE_RNASEQ_MIN]
+					      [-mrmax MOUSE_RNASEQ_MAX] [-b BATCH_SIZE]
+					      [-l LEARNING_RATE] [-d DROPOUT_RATE]
+					      [-nl1 NUM_LAYERS_1] [-nl2 NUM_LAYERS_2]
+					      [-nnh1 NUM_NEURON_HUMAN_1]
+					      [-nnh2 NUM_NEURON_HUMAN_2]
+					      [-nnm1 NUM_NEURON_MOUSE_1]
+					      [-nnm2 NUM_NEURON_MOUSE_2] [-nn1 NUM_NEURON_1]
+					      [-nn2 NUM_NEURON_2]
 		
 		Train a neural network
 		
@@ -453,14 +453,14 @@ As specified in the data split, to make predictions for pairs of human and mouse
 								
 		# Example of training with data from odd chromosomes for hyper-parameter search:
 		python source/train.py	-A data/shuf_odd_training.h.gz \
-								-B data/shuf_odd_training.m.gz \
-								-C data/shufx2_odd_training.m.gz \
-								-D data/shuf_odd_validation.h.gz \
-								-E data/shuf_odd_validation.m.gz \
-								-F data/shufx2_odd_validation.m.gz \
-								-tra 1000000 -tr 1000000 \ 
-								-s 1 -t -k \
-								> NN/output/train.py.output_odd_1.txt
+					-B data/shuf_odd_training.m.gz \
+					-C data/shufx2_odd_training.m.gz \
+					-D data/shuf_odd_validation.h.gz \
+					-E data/shuf_odd_validation.m.gz \
+					-F data/shufx2_odd_validation.m.gz \
+					-tra 1000000 -tr 1000000 \ 
+					-s 1 -t -k \
+					> NN/output/train.py.output_odd_1.txt
 		
 	`-k` specifies that the hyper-parameters should be chosen randomly. [This table](table/SupplementaryTable3.xlsx) lists all the hyper-parameters and their candidate values. Both positive training data size (specified by `-tr`) and total positive training data size (specified by `-tra`) is set to 1 million since we want all 100 neural networks to be trained on the first 1 million positive samples and the first 1 million negative samples in the provided training data file. It is assumed that the number of negative samples is the same as the number of positive samples.
 	
@@ -481,17 +481,17 @@ As specified in the data split, to make predictions for pairs of human and mouse
 
 		# Example of training with data from odd chromosomes with the best combination of hyper-parameters:
 		python source/train.py	-A data/shuf_odd_training.h.gz \
-								-B data/shuf_odd_training.m.gz \
-								-C data/shufx2_odd_training.m.gz \
-								-D data/shuf_odd_validation.h.gz \
-								-E data/shuf_odd_validation.m.gz \
-								-F data/shufx2_odd_validation.m.gz \
-								-o NN/odd_ensemble/NN \
-								-tra 2208562 -ta 1000000 \
-								-b 128 -l 0.1 -d 0.2 \
-								-nl1 1 -nl2 1 -nl3 2 \
-								-nnh1 256 -nnh2 0 -nnm1 128 -nnm2 0 -nn1 128 -nn2 32 \
-								-s 1 -t -v 
+					-B data/shuf_odd_training.m.gz \
+					-C data/shufx2_odd_training.m.gz \
+					-D data/shuf_odd_validation.h.gz \
+					-E data/shuf_odd_validation.m.gz \
+					-F data/shufx2_odd_validation.m.gz \
+					-o NN/odd_ensemble/NN \
+					-tra 2208562 -ta 1000000 \
+					-b 128 -l 0.1 -d 0.2 \
+					-nl1 1 -nl2 1 -nl3 2 \
+					-nnh1 256 -nnh2 0 -nnm1 128 -nnm2 0 -nn1 128 -nn2 32 \
+					-s 1 -t -v 
 		
 	`-v` specifies the trained classifier to be saved so that it can be used for prediction later. Unlike the previous example provided for hyper-parameter search, here the total positive training data size (specified by `-tra`) is larger than the positive training data size (specified as 1 million by `-tr`). This allows each of the 100 neural networks to randomly sample 1 million positive and 1 million negative samples from the entire training data, resulting in 100 neural networks with the same hyper-parameters and architecture but trained on different subsets of the data.
 	
