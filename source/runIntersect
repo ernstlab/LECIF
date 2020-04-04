@@ -1,0 +1,14 @@
+#!/bin/bash
+
+position_filename=$1
+input_filename=$2
+output_filename=$3
+op=$4
+
+# ChromHMM, RNA-seq, or CAGE --more than 3 columns needed
+if [ "$op" -eq "1" ]; then
+    bedtools intersect -sorted -wb -a $position_filename -b $input_filename | cut -f 4,8- | gzip > $output_filename
+# DNase-seq or ChIP-seq --only the first 3 columns needed
+else
+    bedtools intersect -sorted -a $position_filename -b $input_filename | cut -f 4 | gzip > $output_filename
+fi

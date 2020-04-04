@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+input_dir=$1
+output_dir=$2
+
+paste -d '?' <(gzip -cd $input_dir/odd_training.h.gz) <(gzip -cd $input_dir/odd_training.m.gz) | shuf |\
+awk -v FS="?" -v OD=$output_dir '{print $1 | "gzip > OD/shuf_odd_training.h.gz"; print $2 | "gzip > OD/shuf_odd_training.m.gz"}'
+gzip -cd $input_dir/shuf_odd_training.m.gz | shuf | gzip > $output_dir/shufx2_odd_training.m.gz
+
+paste -d '?' <(gzip -cd $input_dir/even_training.h.gz) <(gzip -cd $input_dir/even_training.m.gz) | shuf |\
+awk -v FS="?" -v OD=$output_dir '{print $1 | "gzip > OD/shuf_even_training.h.gz"; print $2 | "gzip > OD/shuf_even_training.m.gz"}'
+gzip -cd $input_dir/shuf_even_training.m.gz | shuf | gzip > $output_dir/shufx2_even_training.m.gz
+
+paste -d '?' <(gzip -cd $input_dir/odd_validation.h.gz) <(gzip -cd $input_dir/odd_validation.m.gz) | shuf -n 100000 |\
+awk -v FS="?" -v OD=$output_dir '{print $1 | "gzip > OD/shuf_odd_validation.h.gz"; print $2 | "gzip > OD/shuf_odd_validation.m.gz"}'
+gzip -cd $input_dir/shuf_odd_validation.m.gz | shuf | gzip > $output_dir/shufx2_odd_validation.m.gz
+
+paste -d '?' <(gzip -cd $input_dir/even_validation.h.gz) <(gzip -cd $input_dir/even_validation.m.gz) | shuf -n 100000 |\
+awk -v FS="?" -v OD=$output_dir '{print $1 | "gzip > OD/shuf_even_validation.h.gz"; print $2 | "gzip > OD/shuf_even_validation.m.gz"}'
+gzip -cd $input_dir/shuf_even_validation.m.gz | shuf | gzip > $output_dir/shufx2_even_validation.m.gz
+
+paste -d '?' <(gzip -cd $input_dir/odd_test.h.gz) <(gzip -cd $input_dir/odd_test.m.gz) | shuf -n 100000 |\
+awk -v FS="?" -v OD=$output_dir '{print $1 | "gzip > OD/shuf_odd_test.h.gz"; print $2 | "gzip > OD/shuf_odd_test.m.gz"}'
+gzip -cd $input_dir/shuf_odd_test.m.gz | shuf | gzip > $output_dir/shufx2_odd_test.m.gz
+
+paste -d '?' <(gzip -cd $input_dir/even_test.h.gz) <(gzip -cd $input_dir/even_test.m.gz) | awk '$1!="chrX"' | shuf -n 100000 |\
+awk -v FS="?" -v OD=$output_dir '{print $1 | "gzip > OD/shuf_even_test.h.gz"; print $2 | "gzip > OD/shuf_even_test.m.gz"}'
+gzip -cd $input_dir/shuf_even_test.m.gz | shuf | gzip > $output_dir/shufx2_even_test.m.gz

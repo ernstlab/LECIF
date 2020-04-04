@@ -1,3 +1,6 @@
+'''
+This script trains a single neural network for either hyper-parameter search or prediction.
+'''
 import sys,gzip,random,numpy as np,argparse,math
 from sklearn.metrics import roc_curve, auc, average_precision_score, mean_squared_error
 from shared import *
@@ -156,97 +159,95 @@ def findLineOffsets(total_positive_training_data_size,
     return offsets
 
 def main():
-
     ### Input arguments start here ###
-    parser = argparse.ArgumentParser(prog='base_maker',description='Train a pseudo-Siamese neural network')
+    parser = argparse.ArgumentParser(prog='python source/train.py', description='Train a neural network')
 
-    # Training data filenames
-    parser.add_argument('-A','--human-training-data-filename',
-                        help='path to human training data file',type=str)
-    parser.add_argument('-B','--mouse-training-data-filename',
-                        help='path to mouse positive training data file',type=str)
-    parser.add_argument('-C','--shuffled-mouse-training-data-filename',
-                        help='path to mouse shuffled/negative training data file',type=str)
+    parser.add_argument('-o', '--output-filename-prefix', help='output prefix (must be specified if saving (-v))',
+                        type=str, default='tmp')
+    parser.add_argument('-k', '--random-search', help='if hyper-parameters should be randomly set', action='store_true')
+    parser.add_argument('-v', '--save', help='if the trained classifier should be saved after training',
+                        action='store_true')
+    parser.add_argument('-t', '--early-stopping',
+                        help='if early stopping should be allowed (stopping before the maximum number of epochs if \
+                        there is no improvement in validation AUROC in three consecutive epochs)',
+                        action='store_true')
+    parser.add_argument('-r', '--neg-data-ratio', help='weight ratio of negative samples to positive samples (default: 50)',
+                        type=int, default=50)
+    parser.add_argument('-s', '--seed', help='random seed (default: 1)', type=int, default=1)
+    parser.add_argument('-e', '--num-epoch', help='maximum number of training epochs (default: 100)', type=int,
+                        default=100)
 
-    # Validation data filenames
-    parser.add_argument('-D','--human-validation-data-filename',
-                        help='path to human validation data file',type=str)
-    parser.add_argument('-E','--mouse-validation-data-filename',
-                        help='path to mouse positive validation data file',type=str)
-    parser.add_argument('-F','--shuffled-mouse-validation-data-filename',
-                        help='path to mouse shuffled/negative validation data file',type=str)
+    g1 = parser.add_argument_group('required arguments specifying training data')
+    g1.add_argument('-A', '--human-training-data-filename', required=True, help='path to human training data file',
+                    type=str)
+    g1.add_argument('-B', '--mouse-training-data-filename', required=True,
+                    help='path to mouse positive training data file', type=str)
+    g1.add_argument('-C', '--shuffled-mouse-training-data-filename', required=True,
+                    help='path to mouse shuffled/negative training data file', type=str)
 
-    # Output prefix
-    parser.add_argument('-o','--output-filename-prefix',type=str,default='tmp')
+    g1_2 = parser.add_argument_group('required arguments specifying validation data')
+    g1_2.add_argument('-D', '--human-validation-data-filename', required=True,
+                      help='path to human validation data file', type=str)
+    g1_2.add_argument('-E', '--mouse-validation-data-filename', required=True,
+                      help='path to mouse positive validation data file', type=str)
+    g1_2.add_argument('-F', '--shuffled-mouse-validation-data-filename', required=True,
+                      help='path to mouse shuffled/negative validation data file', type=str)
 
-    # Options
-    parser.add_argument('-k','--random-search',
-                        help='if hyperparameters should be randomly set',action='store_true')
-    parser.add_argument('-v','--save',
-                        help='if the trained model should be saved after training',action='store_true')
-    parser.add_argument('-t','--early-stopping',
-                        help='if early stopping should be allowed',action='store_true')
+    g4 = parser.add_argument_group('required arguments describing feature data')
+    g4.add_argument('-tr', '--positive-training-data-size',
+                    help='number of samples in positive training data to *use* (default: 1000000)', type=int,
+                    default=1000000)
+    g4.add_argument('-tra', '--total-positive-training-data-size',
+                    help='number of samples in total positive training data to *read*', type=int)
+    g4.add_argument('-va', '--positive-validation-data-size',
+                    help='number of samples in positive validation data to use (default: 100000)', type=int,
+                    default=100000)
+    g4.add_argument('-hf', '--num-human-features',
+                    help='number of human features in input vector (default: 8824)', type=int, default=8824)
+    g4.add_argument('-mf', '--num-mouse-features',
+                    help='number of mouse features in input vector (default: 3113)', type=int, default=3113)
+    g4.add_argument('-hrmin', '--human-rnaseq-min',
+                    help='minimum expression level in human RNA-seq data (default: 8e-05) ', type=float, default=8e-05)
+    g4.add_argument('-hrmax', '--human-rnaseq-max',
+                    help='maximum expression level in human RNA-seq data (default: 1.11729e06)', type=float,
+                    default=1.11729e06)
+    g4.add_argument('-mrmin', '--mouse-rnaseq-min',
+                    help='minimum expression level in mouse RNA-seq data (default: 0.00013)', type=float,
+                    default=0.00013)
+    g4.add_argument('-mrmax', '--mouse-rnaseq-max',
+                    help='maximum expression level in mouse RNA-seq data (default: 41195.3)', type=float,
+                    default=41195.3)
 
-    # Hyper-parameters for training
-    parser.add_argument('-r','--neg-data-ratio',
-                        help='ratio of negative samples to positive samlpes',type=int,default=50)
-    parser.add_argument('-s', '--seed',
-                        help='random seed',type=int,default=69)
-    parser.add_argument('-e','--num-epoch',
-                        help='number of training epochs',type=int,default=100)
-    parser.add_argument('-tr','--positive-training-data-size',
-                        help='number of samples in positive training data to use',type=int,default=1000000)
-    parser.add_argument('-tra','--total-positive-training-data-size',
-                        help='number of samples in total positive training data',type=int)
-    parser.add_argument('-va','--positive-validation-data-size',
-                        help='number of samples in positive validation data',type=int,default=100000)
-    parser.add_argument('-b','--batch-size',
-                        help='training batch size',type=int,default=64)
-    parser.add_argument('-l','--learning-rate',
-                        help='epsilon',type=float,default=0.1)
-    parser.add_argument('-d','--dropout-rate',
-                        type=float,default=0.2)
+    g2 = parser.add_argument_group(
+        'optional arguments specifying hyper-parameters (ignored if random search (-k) is specified)')
+    g2.add_argument('-b', '--batch-size', help='batch size (default: 128)', type=int, default=128)
+    g2.add_argument('-l', '--learning-rate', help='epsilon (default: 0.1)', type=float, default=0.1)
+    g2.add_argument('-d', '--dropout-rate', help='dropout rate (default: 0.1)', type=float, default=0.1)
 
-    # Hyper-parameters for neural network architecture
-    parser.add_argument('-nl1','--num-layers-1',
-                        help='number of hidden layers for human features',type=int, default=1)
-    parser.add_argument('-nl2','--num-layers-2',
-                        help='number of hidden layers for mouse features',type=int, default=1)
-    parser.add_argument('-nl3','--num-layers-3',
-                        help='number of hidden layers in the final network',type=int, default=1)
-
-    parser.add_argument('-nnh1','--num-neuron-human-1',
-                        help='number of neurons in the first hidden layer for human features',type=int, default=256)
-    parser.add_argument('-nnh2','--num-neuron-human-2',
-                        help='number of neurons in the second hidden layer for human features (zero if no second hidden layer)',
-                        type=int, default=0)
-    parser.add_argument('-nnm1','--num-neuron-mouse-1'
-                        ,help='number of neurons in the first hidden layer for mouse features',type=int, default=128)
-    parser.add_argument('-nnm2','--num-neuron-mouse-2',
-                        help='number of neurons in the second hidden layer for mouse features (zero if no second hidden layer)',
-                        type=int, default=0)
-    parser.add_argument('-nn1','--num-neuron-1',
-                        help='number of neurons in the first hidden layer in the final network',type=int, default=256)
-    parser.add_argument('-nn2','--num-neuron-2',
-                        help='number of neurons in the second hidden layer in the final network (zero if no second hidden layer)',
-                        type=int, default=0)
-
-    # Feature information --fixed
-    parser.add_argument('-hf','--num-human-features',
-                        help='number of human features in input vector',type=int,default=8824)
-    parser.add_argument('-mf','--num-mouse-features',
-                        help='number of mouse features in input vector',type=int,default=3113)
-    parser.add_argument('-hrmin','--human-rnaseq-min',
-                        help='minimum expression level in human RNA-seq data',type=float,default=8e-05)
-    parser.add_argument('-hrmax','--human-rnaseq-max',
-                        help='maximum expression level in human RNA-seq data',type=float,default=1.11729e06)
-    parser.add_argument('-mrmin','--mouse-rnaseq-min',
-                        help='minimum expression level in mouse RNA-seq data',type=float,default=0.00013)
-    parser.add_argument('-mrmax','--mouse-rnaseq-max',
-                        help='maximum expression level in mouse RNA-seq data',type=float,default=41195.3)
+    g2.add_argument('-nl1', '--num-layers-1', help='number of hidden layers in species-specific sub-networks (default: 1)',
+                    type=int, default=1)
+    g2.add_argument('-nl2', '--num-layers-2', help='number of hidden layers in final sub-network (default: 1)', type=int,
+                    default=1)
+    g2.add_argument('-nnh1', '--num-neuron-human-1',
+                    help='number of neurons in the first hidden layer in the human-specific sub-network (default :1)', type=int,
+                    default=256)
+    g2.add_argument('-nnh2', '--num-neuron-human-2',
+                    help='number of neurons in the second hidden layer in the human-specific sub-network (default: 0)', type=int,
+                    default=0)
+    g2.add_argument('-nnm1', '--num-neuron-mouse-1',
+                    help='number of neurons in the first hidden layer in the mouse-specific sub-network (default: 128)', type=int,
+                    default=128)
+    g2.add_argument('-nnm2', '--num-neuron-mouse-2',
+                    help='number of neurons in the second hidden layer in the mouse-specific sub-network (default: 0)', type=int,
+                    default=0)
+    g2.add_argument('-nn1', '--num-neuron-1',
+                    help='number of neurons in the first hidden layer in the final sub-network (default: 256)', type=int,
+                    default=256)
+    g2.add_argument('-nn2', '--num-neuron-2',
+                    help='number of neurons in the second hidden layer in the final sub-network (default: 0)', type=int,
+                    default=0)
 
     args = parser.parse_args()
-    print (args)
     ### Input arguments end here ###
 
 
@@ -262,7 +263,7 @@ def main():
         batch_size,learning_rate,dropout_rate,num_layers,num_neurons = setTrainingHyperParameters()
     else:
         batch_size,learning_rate,dropout_rate = args.batch_size,args.learning_rate,args.dropout_rate
-        num_layers = [args.num_layers_1,args.num_layers_2,args.num_layers_3]
+        num_layers = [args.num_layers_1,args.num_layers_1,args.num_layers_2]
         num_neurons = [args.num_neuron_human_1,args.num_neuron_human_2,args.num_neuron_mouse_1,args.num_neuron_mouse_2,args.num_neuron_1,args.num_neuron_2]
 
     # Store and print hyper-parameters

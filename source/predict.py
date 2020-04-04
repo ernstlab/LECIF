@@ -1,3 +1,6 @@
+'''
+This script generates predictions for a set of pairs given a trained neural network.
+'''
 import gzip,random,numpy as np,argparse
 
 # Pytorch
@@ -66,31 +69,37 @@ def predict(net,
             l = '\n'.join(sample_output)+'\n'
             fout.write(l.encode())
 
+
 def main():
+    epilog = '# Example: python source/predict.py -t NN/odd_ensemble/NN_1_*.pt -H data/even_all.h.gz -M \
+    data/even_all.m.gz -d 16627449 -o NN/odd_ensemble/even_all_1.gz'
 
-    parser = argparse.ArgumentParser(prog='base_maker',description='Predict score given a trained neural network')
-    parser.add_argument('-t', '--trained-classifier-filename',
-                        help='path to trained classifier (.pkl or .pkl.gz)', type=str)
-    parser.add_argument('-H', '--human-test-filename', help='path to human test data file', type=str)
-    parser.add_argument('-M', '--mouse-test-filename',type=str)
+    parser = argparse.ArgumentParser(prog='python source/predict.py',
+                                     description='Generate predictions given a trained neural network',
+                                     epilog=epilog)
+    parser.add_argument('-s', '--seed', help='random seed (default: 1)', type=int, default=1)
+    parser.add_argument('-b', '--batch-size', help='batch size (default: 128)', type=int, default=128)
 
-    parser.add_argument('-d', '--test-data-size', help='number of samples in test data', type=int)
-    parser.add_argument('-s', '--seed', help='random seed', type=int, default=1)
-    parser.add_argument('-o', '--output-filename', help='path to output file', type=str)
-    parser.add_argument('-b', '--batch-size', help='batch size', type=int, default=128)
+    g1 = parser.add_argument_group('required arguments specifying input and output')
+    g1.add_argument('-t', '--trained-classifier-filename', required=True, help='path to a trained classifier (.pt)',
+                    type=str)
+    g1.add_argument('-H', '--human-feature-filename', required=True, help='path to human feature data file', type=str)
+    g1.add_argument('-M', '--mouse-feature-filename', required=True, help='path to mouse feature data file', type=str)
+    g1.add_argument('-d', '--data-size', required=True, help='number of samples', type=int)
+    g1.add_argument('-o', '--output-filename', required=True, help='path to output file', type=str)
 
-    parser.add_argument('-hf','--num-human-features',
-                        help='number of human features in input vector',type=int,default=8824)
-    parser.add_argument('-mf','--num-mouse-features',
-                        help='number of mouse features in input vector',type=int,default=3113)
-    parser.add_argument('-hrmin','--human-rnaseq-min',
-                        help='minimum expression level in human RNA-seq data',type=float,default=8e-05)
-    parser.add_argument('-hrmax','--human-rnaseq-max',
-                        help='maximum expression level in human RNA-seq data',type=float,default=1.11729e06)
-    parser.add_argument('-mrmin','--mouse-rnaseq-min',
-                        help='minimum expression level in mouse RNA-seq data',type=float,default=0.00013)
-    parser.add_argument('-mrmax','--mouse-rnaseq-max',
-                        help='maximum expression level in mouse RNA-seq data',type=float,default=41195.3)
+    g1.add_argument('-hf', '--num-human-features',
+                    help='number of human features in input vector (default: 8824)', type=int, default=8824)
+    g1.add_argument('-mf', '--num-mouse-features',
+                    help='number of mouse features in input vector (default: 3113)', type=int, default=3113)
+    g1.add_argument('-hrmin', '--human-rnaseq-min',
+                    help='minimum expression level in human RNA-seq data (default: 8e-05)', type=float, default=8e-05)
+    g1.add_argument('-hrmax', '--human-rnaseq-max',
+                    help='maximum expression level in human RNA-seq data (default: 1.11729e06)', type=float, default=1.11729e06)
+    g1.add_argument('-mrmin', '--mouse-rnaseq-min',
+                    help='minimum expression level in mouse RNA-seq data (default: 0.00013)', type=float, default=0.00013)
+    g1.add_argument('-mrmax', '--mouse-rnaseq-max',
+                    help='maximum expression level in mouse RNA-seq data (default: 41195.3)', type=float, default=41195.3)
 
     args = parser.parse_args()
 
@@ -105,8 +114,8 @@ def main():
 
     # Make predictions
     predict(net,
-            args.human_test_filename,args.mouse_test_filename,args.output_filename,
-            args.test_data_size,args.batch_size,
+            args.human_feature_filename,args.mouse_feature_filename,args.output_filename,
+            args.data_size,args.batch_size,
             args.num_human_features,args.num_mouse_features,
             [args.human_rnaseq_min,args.human_rnaseq_max],
             [args.mouse_rnaseq_min,args.mouse_rnaseq_max])

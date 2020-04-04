@@ -1,0 +1,6 @@
+#!/bin/bash
+
+input_file="${1/23/X}"
+output_file="${2/23/X}"
+
+gzip -cd $input_file | sort -k2,2n | gzip > $output_file

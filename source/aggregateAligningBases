@@ -1,0 +1,6 @@
+#!/bin/bash
+
+input_dir=$1
+output_filename=$2
+
+for f in `\ls $input_dir*.gz | sort -t '.' -k2,2`; do gzip -cd $f; done | awk -v OFS="\t" '{print $0,NR-1}' | gzip > $output_filename

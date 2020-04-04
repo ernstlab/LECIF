@@ -1,3 +1,7 @@
+'''
+This script defines the neural network architecture and functions useful in training
+'''
+
 import sys,scipy.sparse,numpy as np,torch
 
 # Print progress given a percentage and appropriate message

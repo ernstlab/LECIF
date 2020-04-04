@@ -1,0 +1,32 @@
+--odd-training-human-chrom
+chr1 chr5 chr9 chr13 chr17
+--odd-validation-human-chrom
+chr3 chr11 chr15 chr19
+--odd-test-human-chrom
+chr1 chr3 chr5 chr7 chr9 chr11 chr13 chr15 chr17 chr19 chr21
+--odd-prediction-human-chrom
+chr1 chr3 chr5 chr7 chr9 chr11 chr13 chr15 chr17 chr19 chr21
+--odd-training-mouse-chrom
+chr1 chr5 chr9 chr13 chr17
+--odd-validation-mouse-chrom
+chr3 chr11 chr15 chr19
+--odd-test-mouse-chrom
+chr1 chr3 chr5 chr7 chr9 chr11 chr13 chr15 chr17 chr19
+--even-training-human-chrom
+chr2 chr6 chr10 chr18 chr22
+--even-validation-human-chrom
+chr4 chr8 chr12 chr16 chr20
+--even-test-human-chrom
+chr2 chr4 chr6 chr8 chr10 chr12 chr14 chr16 chr18 chr20 chr22
+--even-prediction-human-chrom
+chr2 chr4 chr6 chr8 chr10 chr12 chr14 chr16 chr18 chr20 chr22 chrX
+--even-training-mouse-chrom
+chr2 chr6 chr10 chr18
+--even-validation-mouse-chrom
+chr4 chr8 chr12 chr16
+--even-test-mouse-chrom
+chr2 chr4 chr6 chr8 chr10 chr12 chr14 chr16 chr18
+--held-out-mouse-chrom
+chr7 chr14 chr21
+--held-out-mouse-chrom
+ chr7 chr14

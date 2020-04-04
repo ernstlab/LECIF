@@ -1,0 +1,61 @@
+#!/bin/bash
+
+directory=$1
+output_directory=$2
+species=$3
+data=$4
+
+# DNase-seq or ChIP-seq (standard BED format) for either species
+if [ "$data" -eq "0" ]; then
+    for filename in "$directory/"*.gz; do
+        new_filename=$output_directory"/"`basename "$filename"`
+        echo $new_filename
+        gzip -cd $filename | awk -v OFS="\t" '{print $1,$2,$3}' | sort -k1,1 -k2,2n | gzip > $new_filename
+    done
+elif [ "$species" -eq "0" ]; then
+    # Human ChromHMM
+    if [ "$data" -eq "1" ]; then
+        for filename in "$directory/"*.bed.gz; do
+            new_filename=$output_directory"/"`basename "$filename"`
+            echo $new_filename
+            gzip -cd $filename | awk -v OFS="\t" '{print $1,$2,$3,$4}' | sort -k1,1 -k2,2n | gzip > $new_filename
+        done
+    # Human CAGE
+    elif [ "$data" -eq "2" ]; then
+        filename=$(ls "$directory/"*.txt.gz)
+        new_filename=$output_directory"/"`basename "$filename"`
+        echo $new_filename
+        gzip -cd $filename | awk '!/^#/ && !/^0/ {print $0}' | awk '{gsub(":", "\t");gsub(",", "\t");gsub("\\.\\.","\t");print}' | cut -f 1-3,5- | sort -k1,1 -k2,2n | gzip > $new_filename
+    # Human RNA-seq
+    elif [ "$data" -eq "3" ]; then
+        for filename in "$directory/"*.bigWig; do
+            new_filename=$output_directory"/"`basename "$filename"`".bed"
+            echo $new_filename
+            ./bigWigToBedGraph $filename $new_filename
+            gzip $new_filename
+        done
+    fi
+elif [ "$species" -eq "1" ]; then
+    # Mouse ChromHMM
+    if [ "$data" -eq "1" ]; then
+        for filename in "$directory/"*.bed.gz; do
+            new_filename=$output_directory"/"`basename "$filename"`
+            echo $new_filename
+            gzip -cd $filename | awk -v OFS="\t" '{print $1,$2,$3,$4}' | sort -k1,1 -k2,2n | gzip > $new_filename
+        done
+    # Mouse CAGE
+    elif [ "$data" -eq "2" ]; then
+        filename=$(ls "$directory/"*.txt.gz)
+        new_filename=$output_directory"/"`basename "$filename"`
+        echo $new_filename
+        gzip -cd $filename | awk '!/^#/ && !/^0/ {print $0}' | awk '{gsub("::", "\t");gsub(":","\t");gsub("\\.\\.","\t");gsub(",","\t");gsub(";","\t");print}' | cut -f 2-4,7- | sort -k1,1 -k2,2n | gzip > $new_filename
+    # Mouse RNA-seq
+    elif [ "$data" -eq "3" ]; then
+        for filename in "$directory/"*.bigWig; do
+            new_filename=$output_directory"/"`basename "$filename"`".bed"
+            echo $new_filename
+            ./bigWigToBedGraph $filename $new_filename
+            gzip $new_filename
+        done
+    fi
+fi
