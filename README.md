@@ -2,7 +2,7 @@
 LECIF is a supervised machine learning method that learns a genome-wide score of evidence for conservation at the functional genomics level. To learn the score, LECIF trains an ensemble of neural networks using a large set of functional genomic annotations from a pair of species with labels from their sequence alignments.
 
 ## Human-Mouse LECIF score
-LECIF score for human (hg19) and mouse (mm10) is available in BigWig format (.bw) [here](https://ernst.cass.idre.ucla.edu/public/LECIF/hg19.mm10.all.bw). The score is defined based on human genomic coordinates.
+LECIF score for human (hg19) and mouse (mm10) is available in BigWig format (.bw) [here](https://ernst.cass.idre.ucla.edu/public/LECIF/hg19.mm10.LECIF.bw). The score is defined based on human genomic coordinates.
 
 ## Applying LECIF to human and mouse
 
