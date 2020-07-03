@@ -6,6 +6,7 @@ LECIF score for human (hg19) and mouse (mm10) is available in BigWig format (.bw
 
 ## Applying LECIF to human and mouse
 ### Requirements
+LECIF was run in a Linux system (CentOS release 6.10). No installation is needed as long as you have all the scripts in the [source](source/) directory and the following resources:
 1. [Python 3](https://www.python.org/downloads/)
 2. [Scipy](https://www.scipy.org/), [Numpy](http://www.numpy.org/)
 3. [PyTorch 0.3.0.post4](https://pytorch.org/get-started/previous-versions/)
@@ -13,7 +14,13 @@ LECIF score for human (hg19) and mouse (mm10) is available in BigWig format (.bw
 5. [Bedtools](https://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html) 
 6. [bigWigToBedGraph](http://hgdownload.soe.ucsc.edu/admin/exe/),  [bedGraphToBigWig](http://hgdownload.soe.ucsc.edu/admin/exe/)
 
-Below we describe the steps of using LECIF to learn the human-mouse LECIF score. Given the large number of genomic regions and functional genomic data sets used here, job arrays are ___highly___ recommended to parallelize almost every step. 
+Although not required, given the large number of genomic regions and functional genomic data sets used here, job arrays are ___highly___ recommended to parallelize almost every step. 
+
+### Example files
+- An example input file for Step 2.6 is provided [here](example/splitData_args.txt).
+- Examples of processed files generated at the end of Step 3 are provided as gzipped files [here](example/). These were downsampled from the actual processed files and can be directly used as input files to [train.py](source/train.py) to train a neural network in Step 4, which should take ~5 minutes on average.
+
+All data used to learn the LECIF score is publically available as described in the following steps.
 
 ### Step 1. Find aligning genomic regions
 
@@ -310,7 +317,7 @@ Below we describe the steps of using LECIF to learn the human-mouse LECIF score.
 
 	The human and mouse chromosomes for the split may be specified as individual input arguments or altogether in an input file. If specifying an input file, see the example above. The file should look like [this](example/splitData_args.txt) where each set of human or mouse chromosomes grouped for a specific purpose are listed. [This table](table/SupplementaryTable2.xlsx) describes this splitting procedure in more detail.
 
-7. Prepare the data generated above for training. This involves shuffling all training examples to randomize the order of aligning pairs (while keeping the pairs of human and mouse regions intact), shuffling them again but only with the mouse regions to generate negative examples, and sampling random pairs to generate validation and test examples.
+7. Prepare the data generated above for training. This involves shuffling all training examples to randomize the order of aligning pairs (while keeping the pairs of human and mouse regions intact), shuffling them again but only with the mouse regions to generate negative examples, and sampling random pairs to generate validation and test examples. 
 
 		source/prepareData \
 		  <path to directory with output files from splitData.py> \
@@ -319,8 +326,10 @@ Below we describe the steps of using LECIF to learn the human-mouse LECIF score.
 		# Example:
 		source/prepareData data/ data/
 
+	Small-sized examples of output files are provided as gzipped files [here](example/), which are used as input files for supervised training in the next step. Note that these were downsampled to have only a thousand lines in each file whereas the actual files generated are much larger.
+
 ### Step 4. Train classifiers
-As specified in the data split, to make predictions for pairs of human and mouse regions with human regions coming from an odd chromosome, we train classifiers using pairs coming from even human and mouse chromosomes. To make predictions for pairs of human and mouse regions with human regions coming from an even chromosome or the X chromosome, we train classifiers using pairs of regions coming from odd human and mouse chromosomes. Therefore the training step below needs to be done twice, once with odd chromosome training data and once with even chromosome training data.
+As specified in the data split, to make predictions for pairs of human and mouse regions with human regions coming from an odd chromosome, we train classifiers using pairs coming from even human and mouse chromosomes. To make predictions for pairs of human and mouse regions with human regions coming from an even chromosome or the X chromosome, we train classifiers using pairs of regions coming from odd human and mouse chromosomes. Therefore the training step below needs to be done twice, once with odd chromosome training data and once with even chromosome training data. As noted above, examples of input files for training a classifier are provided as gzipped files [here](example/).
 
 1. Hyper-parameter search: 
 	Train 100 neural networks, each with randomly determined combinations of hyper-parameters and trained on the same set of 1 million positive and 1 million negative training examples. 
