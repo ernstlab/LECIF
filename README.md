@@ -1,5 +1,5 @@
 # LECIF: Learning Evidence of Conservation from Integrated Functional genomic annotations
-LECIF is a supervised machine learning method that learns a genome-wide score of evidence for conservation at the functional genomics level. To learn the score, LECIF trains an ensemble of neural networks using a large set of functional genomic annotations from a pair of species with labels from their sequence alignments.
+LECIF is a supervised machine learning method that learns a genome-wide score of evidence for conservation at the functional genomics level. To learn the score, LECIF trains an ensemble of neural networks using a large set of functional genomic annotations from a pair of species with labels from their sequence alignments. 
 
 ## Human-Mouse LECIF score
 LECIF score for human (hg19) and mouse (mm10) is available in BigWig format (.bw) [here](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/hg19.mm10.LECIF.bw). The score is defined based on human genomic coordinates. When displaying the score on [UCSC Genome Browser](https://genome.ucsc.edu/cgi-bin/hgGateway), to view the genomic bases in which the score is available, display [Net Track for mouse](https://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=compGeno&hgta_track=placentalChainNet&hgta_table=netMm10&hgta_doSchema=describe+table+schema), which is a subtrack in Placental Chain/Net Track under Comparative Genomics.
@@ -615,3 +615,6 @@ Soo Bin Kwon (University of California, Los Angeles), Jason Ernst (University of
 
 ## Acknowledgements
 We thank Trevor Ridgley (University of California, Santa Cruz) and Grace Casarez (University of California, Santa Barbara) for their contribution during the Bruins-In-Genomics (B.I.G.) Summer Research Program.
+
+## Reference
+Kwon, S.B., Ernst, J. Learning a genome-wide score of human–mouse conservation at the functional genomics level. Nat Commun 12, 2495 (2021). https://doi.org/10.1038/s41467-021-22653-8
