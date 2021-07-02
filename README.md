@@ -26,7 +26,7 @@ All data used to learn the LECIF score is publically available as described in t
 
 1. Download [axtNet files](http://hgdownload.cse.ucsc.edu/goldenpath/hg19/vsMm10/axtNet/) with human as the reference. These files describe chained and netted alignments between human and mouse.
 
-2. For each human chromosome (except for Y and mitochondrial chromosomes), find all mouse bases that align to that human chromosome.
+2. For each human chromosome (except for Y and mitochondrial chromosomes), find all mouse bases that align to that human chromosome. In addition to the axtNet files, this requires file [mm10.chrom.sizes](http://hgdownload.cse.ucsc.edu/goldenpath/mm10/bigZips/mm10.chrom.sizes) as input.
 
 		usage: python source/findAligningBases.py [-h] -a AXTNET_FILENAME -m
 							  MOUSE_CHROM_SIZE_FILENAME -o
