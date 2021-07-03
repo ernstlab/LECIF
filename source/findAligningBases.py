@@ -128,9 +128,6 @@ def main():
             fin.readline() # read a black line before the next alignment
             line = fin.readline() # read and save next line
 
-            if int(align_num)>1000:
-                break
-
             #sys.stdout.write("\rCurrent chain: "+align_num)
             #sys.stdout.flush()
 
