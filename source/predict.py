@@ -42,9 +42,9 @@ def predict(net,
                 nonzero_mouse_feature_indices = [int(s) for s in ml[1].strip().split()]
 
                 # Normalize RNA-seq values
-                real_valued_human_features = [float(s)-human_rnaseq_range[0]/hrr
+                real_valued_human_features = [(float(s)-human_rnaseq_range[0])/hrr
                                               for s in hl[2].strip().split()] if len(hl)>1 else []
-                real_valued_mouse_features = [float(s)-mouse_rnaseq_range[0]/mrr
+                real_valued_mouse_features = [(float(s)-mouse_rnaseq_range[0])/mrr
                                               for s in ml[2].strip().split()] if len(ml)>1 else []
 
                 # Set non-zero features to the corresponding values
