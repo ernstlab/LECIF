@@ -15,7 +15,7 @@ LECIF score mapped to hg38, mm10, and mm39 genomic coordinates are also availabl
 - A bug fix correcting how RNA-seq input features are processed in `source/predict.py`
 - Missing human RNA-seq datasets added back 
 
-The first version of the score (LECIF v1) before the updates are available [here](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6).
+The first version of the score (LECIF v1) before the updates are available [here](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/).
 
 ## Applying LECIF to human and mouse
 ### Requirements
