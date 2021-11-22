@@ -2,12 +2,20 @@
 LECIF is a supervised machine learning method that learns a genome-wide score of evidence for conservation at the functional genomics level. To learn the score, LECIF trains an ensemble of neural networks using a large set of functional genomic annotations from a pair of species with labels from their sequence alignments. 
 
 ## Human-Mouse LECIF score
-LECIF score for human (hg19) and mouse (mm10) is available in BigWig format (.bw) [here](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/hg19.LECIF.bw). The score is defined based on hg19 genomic coordinates. When displaying the score on [UCSC Genome Browser](https://genome.ucsc.edu/cgi-bin/hgGateway), to view the genomic bases in which the score is available, display [Net Track for mouse](https://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=compGeno&hgta_track=placentalChainNet&hgta_table=netMm10&hgta_doSchema=describe+table+schema), which is a subtrack in Placental Chain/Net Track under Comparative Genomics.
+
+### LECIF v1.1
+LECIF score for human (hg19) and mouse (mm10) is available in BigWig format (.bw) [here](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/hg19.LECIFv1.1.bw). The score is defined based on hg19 genomic coordinates. When displaying the score on [UCSC Genome Browser](https://genome.ucsc.edu/cgi-bin/hgGateway), to view the genomic bases in which the score is available, display [Net Track for mouse](https://genome.ucsc.edu/cgi-bin/hgTables?db=hg19&hgta_group=compGeno&hgta_track=placentalChainNet&hgta_table=netMm10&hgta_doSchema=describe+table+schema), which is a subtrack in Placental Chain/Net Track under Comparative Genomics.
 
 LECIF score mapped to hg38, mm10, and mm39 genomic coordinates are also available in BigWig format below. To map the score from hg19 to mm10, we relied on the output file `position/hg19.mm10.basepair.gz` from Step 1 below that lists aligning bases between hg19 and mm10. To map the score from hg19 to hg38 or from mm10 to mm39, we used UCSC Genome Browser's [liftOver](https://genome.ucsc.edu/cgi-bin/hgLiftOver) tool. We note that when we encountered multiple hg19 bases mapping to the same base in a new genome/assembly, we assigned the average LECIF score of the multiple hg19 bases to the base in the new genome/assembly.
-- [hg38](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/hg38.LECIF.bw)
-- [mm10](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/mm10.LECIF.bw)
-- [mm39](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/mm39.LECIF.bw)
+- [hg38](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/hg38.LECIFv1.1.bw)
+- [mm10](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/mm10.LECIFv1.1.bw)
+- [mm39](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6/LECIF/mm39.LECIFv1.1.bw)
+
+### v1.1 updates
+- A bug fix correcting how RNA-seq input features are processed in `source/predict.py`
+- Missing human RNA-seq datasets added back 
+
+The first version of the score (LECIF v1) before the updates are available [here](https://public.hoffman2.idre.ucla.edu/ernst/R0RG6).
 
 ## Applying LECIF to human and mouse
 ### Requirements
