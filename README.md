@@ -214,6 +214,11 @@ All data used to learn the LECIF score is publically available as described in t
 		25 -can 1829 -fn 8824 -o data/split/all_1.h.gz -s -c 1000000 -i 1
 
 	Using the `-s` option allows you to process one chunk of data at a time to parallelize this step. Split index specified by `-i` determines which chunk should be processed. For example, if there are 5,500,000 regions and you wish to process 1,000,000 regions in each job, 6 separate jobs should be submitted with the same set of input arguments except for the split index which would range from 1 to 51. The last chunk would correspond to 500,000 regions.
+	
+	Note: If your species of interest lacks CAGE data, try the following:
+	
+	- Create a directory with an empty text file: `mkdir CAGE; touch CAGE/dummy.txt`
+	- Provide that as CAGE directory and set the number of CAGE experiments to 0: `--cage-dir CAGE --cage-num-experiments 0`
 									
 5. For each species, combine the output from `generateDataThreaded.py` from each chunk into a single file.
 
